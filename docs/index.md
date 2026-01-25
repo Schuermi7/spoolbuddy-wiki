@@ -65,6 +65,11 @@ Scan a spool and SpoolBuddy automatically updates the matching AMS slot with cor
 </div>
 
 <div class="feature-card" markdown>
+### :material-devices: Control from Any Device
+Access SpoolBuddy from the touchscreen display, PC, phone, tablet, or integrate via REST API. Your system, anywhere.
+</div>
+
+<div class="feature-card" markdown>
 ### :material-scale-balance: Precision Weight Scale
 Built-in 5kg load cell with 24-bit ADC tracks remaining filament down to 0.1 gram accuracy.
 </div>
