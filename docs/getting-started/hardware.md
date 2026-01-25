@@ -126,8 +126,6 @@ Complete bill of materials for building a SpoolBuddy station. Total cost: **$100
 | Item | Quantity | Size | Purpose |
 |------|----------|------|---------|
 | DIN 912 Cylinder Screws | 4 | M4x25 | Load cell mounting |
-| Nuts | 4 | M4 | Load cell mounting |
-| Standoffs | 4 | M3x10 | Display mounting |
 
 **Purchase:**
 
