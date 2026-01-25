@@ -82,6 +82,17 @@ volumes:
   spoolbuddy-data:
 ```
 
+!!! warning "Host Network Mode Required"
+    SpoolBuddy uses `network_mode: host` instead of port mapping. This is **required** for automatic printer discovery via SSDP (Simple Service Discovery Protocol).
+
+    SSDP uses UDP multicast on port 1900, which doesn't work through Docker's default bridge network. With host mode:
+
+    - SpoolBuddy can discover Bambu printers on your local network
+    - The container shares the host's network stack directly
+    - Port 3000 is exposed automatically (no `-p 3000:3000` needed)
+
+    **If you use bridge networking**, printer discovery won't work and you'll need to add printers manually by IP address.
+
 ### Environment Variables
 
 Customize SpoolBuddy with environment variables:
