@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SpoolBuddy Software Setup - Configure the backend server and connect to your Bambu printer.">
+  <title>Software Setup - SpoolBuddy Wiki</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://spoolbuddy.cool/assets/img/spoolbuddy_logo_dark.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/wiki.css">
+</head>
+<body>
+  <div class="scroll-progress"></div>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="https://spoolbuddy.cool" class="nav-logo"><img src="https://spoolbuddy.cool/assets/img/spoolbuddy_logo_dark.png" alt="SpoolBuddy" class="logo-img"></a>
+      <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+      <div class="nav-links">
+        <a href="https://spoolbuddy.cool" class="nav-link">Home</a>
+        <a href="https://spoolbuddy.cool/features.html" class="nav-link">Features</a>
+        <a href="index.html" class="nav-link active">Docs</a>
+        <a href="https://discord.gg/3XFdHBkF" class="nav-cta nav-discord" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419s.956-2.419 2.157-2.419 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419s.955-2.419 2.157-2.419 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/></svg>Discord</a>
+        <a href="https://github.com/maziggy/spoolbuddy" class="nav-cta" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="wiki-hero">
+    <div class="container">
+      <h1>Software <span class="text-gradient">Setup</span></h1>
+      <p>Configure the backend server on Raspberry Pi and connect to your Bambu printer.</p>
+    </div>
+  </section>
+
+  <section class="wiki-content">
+    <div class="container">
+      <div class="doc-layout">
+        <aside class="doc-sidebar">
+          <h4>On This Page</h4>
+          <ul>
+            <li><a href="#pi-setup">Raspberry Pi Setup</a></li>
+            <li><a href="#backend">Backend Installation</a></li>
+            <li><a href="#config">Configuration</a></li>
+            <li><a href="#running">Running the Server</a></li>
+            <li><a href="#printer">Connect to Printer</a></li>
+            <li><a href="#api">API Reference</a></li>
+          </ul>
+          <h4>Documentation</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="hardware.html">Hardware Required</a></li>
+            <li><a href="wiring.html">Wiring Guide</a></li>
+            <li><a href="assembly.html">Assembly Guide</a></li>
+            <li><a href="firmware.html">Firmware</a></li>
+            <li><a href="software.html" class="active">Software Setup</a></li>
+            <li><a href="troubleshooting.html">Troubleshooting</a></li>
+          </ul>
+        </aside>
+
+        <main class="doc-content">
+          <h2 id="pi-setup">Raspberry Pi Setup</h2>
+
+          <h3>Initial OS Setup</h3>
+          <ol>
+            <li><strong>Flash Raspberry Pi OS Lite</strong> - Use Raspberry Pi Imager, choose "Raspberry Pi OS Lite (64-bit)", configure WiFi and SSH in imager settings</li>
+            <li><strong>Boot and connect:</strong><br>
+              <pre><code>ssh pi@raspberrypi.local</code></pre>
+            </li>
+            <li><strong>Update system:</strong><br>
+              <pre><code>sudo apt update && sudo apt upgrade -y</code></pre>
+            </li>
+          </ol>
+
+          <h3>Install Dependencies</h3>
+          <pre><code># Python 3.10+ (usually pre-installed)
+python3 --version
+
+# Install pip and venv
+sudo apt install -y python3-pip python3-venv git</code></pre>
+
+          <h2 id="backend">Backend Installation</h2>
+
+          <h3>Clone Repository</h3>
+          <pre><code>cd ~
+git clone https://github.com/maziggy/spoolbuddy.git
+cd spoolbuddy/backend</code></pre>
+
+          <h3>Create Virtual Environment</h3>
+          <pre><code>python3 -m venv venv
+source venv/bin/activate</code></pre>
+
+          <h3>Install Python Dependencies</h3>
+          <pre><code>pip install -r requirements.txt</code></pre>
+
+          <p>This installs FastAPI, Uvicorn, SQLAlchemy, Paho-MQTT, Pydantic, and Websockets.</p>
+
+          <h2 id="config">Configuration</h2>
+
+          <h3>Environment Variables</h3>
+          <p>Create a <code>.env</code> file:</p>
+          <pre><code># Server settings
+HOST=0.0.0.0
+PORT=3000
+
+# Database
+DATABASE_URL=sqlite:///./spoolbuddy.db
+
+# Bambu Cloud (optional)
+BAMBU_CLOUD_EMAIL=your@email.com
+BAMBU_CLOUD_PASSWORD=yourpassword</code></pre>
+
+          <h2 id="running">Running the Server</h2>
+
+          <h3>Manual Start</h3>
+          <pre><code>cd ~/spoolbuddy/backend
+source venv/bin/activate
+python main.py</code></pre>
+
+          <p>Expected output:</p>
+          <pre><code>INFO:     SpoolBuddy Backend v1.0.0
+INFO:     Database initialized
+INFO:     Starting server on 0.0.0.0:3000
+INFO:     Uvicorn running on http://0.0.0.0:3000</code></pre>
+
+          <h3>Systemd Service (Auto-start)</h3>
+          <p>Create service file:</p>
+          <pre><code>sudo nano /etc/systemd/system/spoolbuddy.service</code></pre>
+
+          <pre><code>[Unit]
+Description=SpoolBuddy Backend Server
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/spoolbuddy/backend
+Environment=PATH=/home/pi/spoolbuddy/backend/venv/bin
+ExecStart=/home/pi/spoolbuddy/backend/venv/bin/python main.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+
+          <p>Enable and start:</p>
+          <pre><code>sudo systemctl daemon-reload
+sudo systemctl enable spoolbuddy
+sudo systemctl start spoolbuddy
+
+# Check status
+sudo systemctl status spoolbuddy</code></pre>
+
+          <h2 id="printer">Connecting to Bambu Printer</h2>
+
+          <h3>Finding Printer Information</h3>
+          <ol>
+            <li><strong>Serial Number:</strong> Printer Settings → Device → Device Info (format: 01S00A0B0012345)</li>
+            <li><strong>Access Code:</strong> Printer Settings → Network → Access Code (8-digit code)</li>
+            <li><strong>IP Address:</strong> Printer Settings → Network → IP Address</li>
+          </ol>
+
+          <h3>Adding Printer via API</h3>
+          <pre><code>curl -X POST http://localhost:3000/api/printers \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "My X1C",
+    "serial": "01S00A0B0012345",
+    "access_code": "12345678",
+    "ip_address": "192.168.1.50"
+  }'</code></pre>
+
+          <h3>Verify Connection</h3>
+          <pre><code>curl http://localhost:3000/api/printers</code></pre>
+
+          <h2 id="api">API Reference</h2>
+
+          <h3>Spools</h3>
+          <table>
+            <tr><th>Endpoint</th><th>Method</th><th>Description</th></tr>
+            <tr><td><code>/api/spools</code></td><td>GET</td><td>List all spools</td></tr>
+            <tr><td><code>/api/spools</code></td><td>POST</td><td>Create spool</td></tr>
+            <tr><td><code>/api/spools/{id}</code></td><td>GET</td><td>Get spool</td></tr>
+            <tr><td><code>/api/spools/{id}</code></td><td>PUT</td><td>Update spool</td></tr>
+            <tr><td><code>/api/spools/{id}</code></td><td>DELETE</td><td>Delete spool</td></tr>
+          </table>
+
+          <h3>Printers</h3>
+          <table>
+            <tr><th>Endpoint</th><th>Method</th><th>Description</th></tr>
+            <tr><td><code>/api/printers</code></td><td>GET</td><td>List printers</td></tr>
+            <tr><td><code>/api/printers</code></td><td>POST</td><td>Add printer</td></tr>
+            <tr><td><code>/api/printers/{serial}/connect</code></td><td>POST</td><td>Connect</td></tr>
+            <tr><td><code>/api/printers/{serial}/disconnect</code></td><td>POST</td><td>Disconnect</td></tr>
+          </table>
+
+          <h3>WebSocket</h3>
+          <p>Connect to <code>ws://[pi-ip]:3000/ws/ui</code> for real-time updates.</p>
+
+          <nav class="doc-nav">
+            <a href="firmware.html">
+              <span>Previous</span>
+              <span>Firmware Installation</span>
+            </a>
+            <a href="troubleshooting.html" class="next">
+              <span>Next</span>
+              <span>Troubleshooting</span>
+            </a>
+          </nav>
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>SpoolBuddy is open source under the MIT License.</p>
+        <div class="footer-social">
+          <a href="https://github.com/maziggy/spoolbuddy" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
+          <a href="https://discord.gg/3XFdHBkF" target="_blank" rel="noopener" aria-label="Discord"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419s.956-2.419 2.157-2.419 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419s.955-2.419 2.157-2.419 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
