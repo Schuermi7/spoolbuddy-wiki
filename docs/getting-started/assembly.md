@@ -40,7 +40,7 @@ Physical assembly and mounting instructions for your SpoolBuddy station.
 │   │    │         Load Cell (hidden)        │            │   │
 │   │    └───────────────────────────────────┘            │   │
 │   │    ┌──────────┐           ┌──────────────┐          │   │
-│   │    │NAU7802   │           │ Pi Zero 2 W  │          │   │
+│   │    │NAU7802   │           │  Pico + NFC  │          │   │
 │   │    └──────────┘           └──────────────┘          │   │
 │   └──────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────┘
@@ -137,11 +137,11 @@ The display can be mounted:
 - Keep I2C wires short (~10-15cm)
 - Protect from vibration
 
-### Raspberry Pi Zero 2 W
+### Raspberry Pi Pico + PN5180
 
-- Mount in enclosure or separate case
-- Ensure good ventilation
-- Keep accessible for SD card
+- Mount Pico near PN5180 to keep SPI wires short
+- Can be secured with double-sided tape or 3D printed holder
+- Position to allow USB access for firmware updates
 
 ---
 

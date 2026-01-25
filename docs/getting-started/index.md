@@ -46,7 +46,7 @@ Welcome to SpoolBuddy! This guide will walk you through building your own filame
 | Component | Purpose |
 |-----------|---------|
 | Elecrow CrowPanel 7.0" Advance | Display + ESP32-S3 |
-| Raspberry Pi Zero 2 W | Backend server |
+| Raspberry Pi Pico | NFC reader controller |
 | SparkFun Qwiic NAU7802 | Scale ADC |
 | 5kg Load Cell | Weight sensor |
 | PN5180 NFC Reader | RFID tag reading |
