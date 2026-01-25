@@ -1,6 +1,8 @@
 # SpoolBuddy
 
-<div class="coming-soon">:material-clock-outline: Hardware Coming Soon</div>
+<div class="coming-soon" markdown>
+:material-clock-outline: Hardware Coming Soon
+</div>
 
 <div class="hero" markdown>
 <div markdown>
@@ -9,10 +11,10 @@
 
 NFC-powered spool identification, precision weight tracking, and seamless inventory management. Scan your spool and auto-configure your AMS slots instantly.
 
-<div class="stats-row">
-  <span class="stat-badge">:material-nfc: NFC Tags</span>
-  <span class="stat-badge">:material-scale: Weight Scale</span>
-  <span class="stat-badge">:material-printer-3d: AMS Integration</span>
+<div class="stats-row" markdown>
+
+:material-nfc: NFC Tags  ·  :material-scale: Weight Scale  ·  :material-printer-3d: AMS Integration
+
 </div>
 
 [Get Started :material-arrow-right:](getting-started/index.md){ .btn .btn-primary }
