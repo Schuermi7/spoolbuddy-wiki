@@ -1,207 +1,222 @@
 # Firmware Installation
 
-Flash the SpoolBuddy firmware to the CrowPanel Advance 7.0" display.
+SpoolBuddy requires firmware on two devices: the **Raspberry Pi Pico** (NFC bridge) and the **CrowPanel Display** (ESP32-S3).
 
 ---
 
-## Prerequisites
+## Device Overview
 
-- SpoolBuddy fully assembled (see [Assembly Guide](assembly.md))
-- USB-C cable (data capable, not charge-only)
-- Computer with USB port
-- PlatformIO or Arduino IDE installed
+| Device | Purpose | Firmware Type |
+|--------|---------|---------------|
+| Raspberry Pi Pico | NFC reader controller | Arduino (.uf2) |
+| CrowPanel 7.0" | Display, scale, WiFi | Rust/ESP-IDF (.bin) |
 
 ---
 
-## Option A: PlatformIO (Recommended)
+## Part 1: Pico NFC Bridge
 
-PlatformIO provides the best development experience with automatic library management.
+The Pico runs the NFC bridge firmware that communicates with the PN5180 reader.
 
-### 1. Install VS Code
+### Option A: Pre-built UF2 (Recommended)
 
-Download from [code.visualstudio.com](https://code.visualstudio.com/){ target="_blank" }
+1. **Download** the pre-built firmware:
 
-### 2. Install PlatformIO Extension
+    [:material-download: **pico-nfc-bridge.uf2**](https://github.com/maziggy/spoolbuddy/releases){ .btn .btn-primary target="_blank" }
 
-1. Open VS Code
-2. Go to Extensions (++ctrl+shift+x++)
-3. Search "PlatformIO"
-4. Install "PlatformIO IDE"
+2. **Enter BOOTSEL mode**:
+   - Hold the **BOOTSEL** button on the Pico
+   - While holding, plug in the USB cable
+   - Release the button
+   - The Pico appears as a USB drive named "RPI-RP2"
 
-### 3. Clone the Repository
+3. **Flash the firmware**:
+   - Drag and drop the `.uf2` file onto the RPI-RP2 drive
+   - The Pico automatically reboots and starts running
+
+4. **Verify**:
+   - The onboard LED should blink every 500ms
+   - Connect a serial monitor at 115200 baud to see:
+     ```
+     Pico NFC Bridge v2.0 starting...
+     Features: MIFARE Classic + NTAG + Bambu HKDF
+     SPI OK
+     Reset OK
+     PN5180 version: 3.5
+     RF ON (ISO14443A)
+     I2C ready at 0x55
+     Ready!
+     ```
+
+### Option B: Build from Source
+
+Requires [PlatformIO](https://platformio.org/){ target="_blank" } installed.
 
 ```bash
+# Clone the repository
 git clone https://github.com/maziggy/spoolbuddy.git
-cd spoolbuddy/firmware
+cd spoolbuddy/pico-nfc-bridge
+
+# Build
+pio run
+
+# Upload (Pico in BOOTSEL mode)
+pio run -t upload
+
+# Monitor serial output
+pio device monitor
 ```
 
-### 4. Open Project
-
-In VS Code: File → Open Folder → select `firmware/`
-
-PlatformIO will detect the project and install dependencies.
-
 ---
 
-## Option B: Arduino IDE
+## Part 2: CrowPanel Display
 
-### 1. Install Arduino IDE 2.x
+The CrowPanel runs the main SpoolBuddy firmware (Rust/ESP-IDF).
 
-Download from [arduino.cc](https://www.arduino.cc/en/software){ target="_blank" }
+### Option A: Pre-built Binary (Recommended)
 
-### 2. Add ESP32 Board Support
+1. **Download** the pre-built firmware:
 
-1. File → Preferences
-2. Add to "Additional Board Manager URLs":
+    [:material-download: **spoolbuddy-firmware.bin**](https://github.com/maziggy/spoolbuddy/releases){ .btn .btn-primary target="_blank" }
+
+2. **Install espflash**:
+   ```bash
+   cargo install espflash
    ```
-   https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+
+   Or download from [espflash releases](https://github.com/esp-rs/espflash/releases){ target="_blank" }
+
+3. **Connect the display**:
+   - Use a USB-C data cable (not charge-only)
+   - Connect to your computer
+   - The display may show a blank screen or old firmware
+
+4. **Find the port**:
+
+    === "Windows"
+        Device Manager → Ports → Look for "USB Serial" (e.g., COM3)
+
+    === "Linux"
+        ```bash
+        ls /dev/ttyACM* /dev/ttyUSB*
+        # Usually /dev/ttyACM0
+        ```
+
+    === "macOS"
+        ```bash
+        ls /dev/cu.usb*
+        # Usually /dev/cu.usbmodem*
+        ```
+
+5. **Flash the firmware**:
+   ```bash
+   espflash flash --monitor spoolbuddy-firmware.bin
    ```
-3. Tools → Board → Boards Manager
-4. Search "esp32" and install "esp32 by Espressif Systems"
 
-### 3. Install Required Libraries
+### Option B: Build from Source
 
-Sketch → Include Library → Manage Libraries. Install:
+Requires Rust and the ESP toolchain.
 
-- `lvgl` (v8.3.x)
-- `TFT_eSPI`
-- `SparkFun_Qwiic_Scale_NAU7802`
-- `ArduinoJson`
-- `WiFiManager`
+#### Prerequisites
 
----
+1. **Install Rust**:
+   ```bash
+   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+   source $HOME/.cargo/env
+   ```
 
-## Board Configuration
+2. **Install ESP toolchain via espup**:
+   ```bash
+   # Install espup
+   cargo install espup --locked
 
-=== "PlatformIO"
+   # Install the ESP toolchain (takes several minutes)
+   espup install
 
-    ```ini title="platformio.ini"
-    [env:crowpanel-7]
-    platform = espressif32
-    board = esp32-s3-devkitc-1
-    framework = arduino
-    board_build.mcu = esp32s3
-    board_build.f_cpu = 240000000L
-    board_upload.flash_size = 16MB
-    board_build.partitions = default_16MB.csv
+   # Source the environment (add to your shell profile)
+   . $HOME/export-esp.sh
+   ```
 
-    build_flags =
-        -D LV_CONF_INCLUDE_SIMPLE
-        -D BOARD_HAS_PSRAM
-        -D ARDUINO_USB_CDC_ON_BOOT=1
+3. **Install espflash**:
+   ```bash
+   cargo install espflash
+   ```
 
-    monitor_speed = 115200
-    upload_speed = 921600
-    ```
+4. **(Linux only) Add USB permissions**:
+   ```bash
+   sudo usermod -a -G dialout $USER
+   # Log out and back in
+   ```
 
-=== "Arduino IDE"
+#### Build and Flash
 
-    | Setting | Value |
-    |---------|-------|
-    | Board | ESP32S3 Dev Module |
-    | Flash Size | 16MB |
-    | PSRAM | OPI PSRAM |
-    | USB Mode | Hardware CDC and JTAG |
-    | Upload Speed | 921600 |
+```bash
+# Clone the repository
+git clone https://github.com/maziggy/spoolbuddy.git
+cd spoolbuddy/firmware
 
----
+# Source ESP environment
+. $HOME/export-esp.sh
 
-## Connecting to Computer
+# Build and flash (with serial monitor)
+cargo run --release
+```
 
-### DIP Switch Settings
+Or build separately:
 
-Before connecting, check the DIP switches on the back of the CrowPanel:
+```bash
+# Build only
+cargo build --release
 
-| Mode | S1 | S0 | Use |
-|------|----|----|-----|
-| Normal | OFF | OFF | Running firmware |
-| **Upload** | **OFF** | **ON** | Flash new firmware |
-| Debug | ON | OFF | Serial debugging |
-
-!!! warning "Set S0=ON, S1=OFF for uploading"
-
-### USB Connection
-
-1. Connect USB-C cable to CrowPanel
-2. Connect other end to computer
-3. Display may show blank or old firmware
-
-### Finding the Port
-
-=== "Windows"
-    Device Manager → Ports (COM & LPT) → Look for "USB Serial" (e.g., COM3)
-
-=== "Linux"
-    ```bash
-    ls /dev/ttyACM* /dev/ttyUSB*
-    # Usually /dev/ttyACM0 for ESP32-S3
-    ```
-
-=== "macOS"
-    ```bash
-    ls /dev/cu.usb*
-    # Usually /dev/cu.usbmodem*
-    ```
-
----
-
-## Flashing the Firmware
-
-=== "PlatformIO"
-
-    1. **Build:** Click the checkmark (✓) or run `pio run`
-    2. **Upload:** Click the arrow (→) or run `pio run -t upload`
-    3. **Monitor:** Click the plug icon or run `pio device monitor`
-
-=== "Arduino IDE"
-
-    1. Select board and port in Tools menu
-    2. Click Verify (checkmark) to compile
-    3. Click Upload (right arrow)
-    4. Open Serial Monitor at 115200 baud
+# Flash manually
+espflash flash --monitor target/xtensa-esp32s3-espidf/release/spoolbuddy-firmware
+```
 
 ---
 
 ## Verification
 
-### Expected Serial Output
+After flashing both devices, verify the system is working:
 
-```
-SpoolBuddy Firmware v1.0.0
-==========================
+### Pico NFC Bridge
 
-[INIT] Starting display...
-[INIT] Display initialized: 800x480
-[INIT] Starting I2C...
-[INIT] NAU7802 found at 0x2A
-[INIT] Starting SPI...
-[INIT] PN5180 detected
-[INIT] Connecting to WiFi...
-[WIFI] Connected: 192.168.1.45
-[WS] Connecting to ws://192.168.1.100:3000/ws/ui
-[WS] Connected!
-[READY] SpoolBuddy ready
-```
+- [ ] LED blinks every 500ms
+- [ ] Serial output shows "Ready!"
+- [ ] PN5180 version displayed (e.g., 3.5)
 
-### Verification Tests
+### CrowPanel Display
 
-- [ ] Display backlight on and LVGL UI renders
+- [ ] Display backlight turns on
+- [ ] UI renders on screen
 - [ ] Touch responds to input
-- [ ] Scale shows weight readings
-- [ ] NFC detects tags when spool placed
-- [ ] WebSocket connects to backend
+- [ ] Serial output shows initialization
+
+### Integration Test
+
+1. Power on the complete system
+2. Place a Bambu Lab spool on the scale
+3. The NFC tag should be detected
+4. Weight should display on screen
 
 ---
 
 ## Troubleshooting
 
+### Pico Issues
+
 | Issue | Solution |
 |-------|----------|
-| Upload fails | Check DIP switches (S0=ON, S1=OFF) |
-| No port detected | Try different USB cable (must be data cable) |
-| Timeout errors | Hold BOOT button while connecting USB |
-| Slow upload | Reduce upload_speed to 460800 or 115200 |
-| No serial output | Enable USB CDC On Boot, check baud rate |
+| RPI-RP2 drive doesn't appear | Try a different USB cable, ensure BOOTSEL held during plug-in |
+| "PN5180 ERROR!" in serial | Check SPI wiring to PN5180 |
+| I2C not working | Verify SDA/SCL connections to CrowPanel |
+
+### Display Issues
+
+| Issue | Solution |
+|-------|----------|
+| "Permission denied" (Linux) | Run `sudo usermod -a -G dialout $USER` and re-login |
+| Port not detected | Try different USB cable (must be data cable) |
+| espflash timeout | Hold BOOT button while pressing RESET, then flash |
+| Build fails with "rust-src not found" | Run `espup install` and source `export-esp.sh` |
 
 ---
 

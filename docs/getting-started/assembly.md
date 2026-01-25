@@ -96,17 +96,15 @@ The enclosure includes:
 - Electronics bay for NAU7802 and Raspberry Pi Pico
 - PN5180 NFC antenna mount
 - Display frame for CrowPanel 7.0"
-- Cable management clips
 
 ### Print Settings
 
 | Setting | Value |
 |---------|-------|
-| Material | PETG or ABS (PLA for testing) |
-| Layer Height | 0.2mm |
-| Infill | 20-30% |
-| Wall Loops | 3-4 for structural parts |
-| Supports | Required for some parts (noted in filenames) |
+| Material | PETG |
+| Infill | 15% |
+| Walls | 3 |
+| Supports | None |
 
 ---
 
