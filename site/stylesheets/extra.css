@@ -1,10 +1,10 @@
 /* SpoolBuddy Custom Styles */
 
 :root {
-  --md-primary-fg-color: #00bcd4;
-  --md-primary-fg-color--light: #4dd0e1;
-  --md-primary-fg-color--dark: #0097a7;
-  --md-accent-fg-color: #2196f3;
+  --md-primary-fg-color: #2196f3;
+  --md-primary-fg-color--light: #64b5f6;
+  --md-primary-fg-color--dark: #1976d2;
+  --md-accent-fg-color: #03a9f4;
 }
 
 /* Larger logo in header */
@@ -29,14 +29,14 @@
   --md-default-fg-color: rgba(255, 255, 255, 0.95);
   --md-default-fg-color--light: rgba(255, 255, 255, 0.75);
   --md-typeset-color: rgba(255, 255, 255, 0.92);
-  --md-typeset-a-color: #00bcd4;
+  --md-typeset-a-color: #2196f3;
 }
 
 [data-md-color-scheme="default"] {
   --md-default-bg-color: #ffffff;
   --md-default-fg-color: rgba(0, 0, 0, 0.87);
   --md-typeset-color: rgba(0, 0, 0, 0.87);
-  --md-typeset-a-color: #00bcd4;
+  --md-typeset-a-color: #2196f3;
 }
 
 /* Hero section for home page */
@@ -59,7 +59,7 @@
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, #00bcd4, #4dd0e1);
+  background: linear-gradient(135deg, #2196f3, #64b5f6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -294,7 +294,7 @@
 /* Coming soon badge */
 .md-typeset .coming-soon {
   display: inline-block;
-  background: linear-gradient(135deg, #00bcd4, #4dd0e1);
+  background: linear-gradient(135deg, #2196f3, #64b5f6);
   color: white;
   padding: 0.3rem 0.8rem;
   border-radius: 100px;
