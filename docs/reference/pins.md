@@ -4,41 +4,23 @@ Quick reference for all SpoolBuddy hardware connections.
 
 ---
 
-## GPIO Usage Summary
+## System Overview
+
+| Controller | Components | Interface |
+|------------|------------|-----------|
+| CrowPanel (ESP32-S3) | Display, NAU7802 Scale | I2C |
+| Raspberry Pi Pico | PN5180 NFC Reader | SPI |
+
+---
+
+## CrowPanel GPIO Usage
 
 | GPIO | Function | Component | Header |
 |------|----------|-----------|--------|
-| IO2 | BUSY | PN5180 | J11 Pin 5 |
-| IO8 | NSS (CS) | PN5180 | J11 Pin 6 |
-| IO15 | RST | PN5180 | J11 Pin 3 |
-| IO16 | MOSI | PN5180 | J11 Pin 2 |
 | IO19 | SDA | NAU7802 | UART1-OUT Pin 1 |
 | IO20 | SCL | NAU7802 | UART1-OUT Pin 2 |
-| IO43 | SCK | PN5180 | UART0-OUT Pin 2 |
-| IO44 | MISO | PN5180 | UART0-OUT Pin 1 |
 
----
-
-## UART0-OUT Header (4-pin)
-
-```
-┌──────┬──────┬──────┬──────┐
-│ Pin1 │ Pin2 │ Pin3 │ Pin4 │
-│IO44  │IO43  │ 3V3  │ GND  │
-│MISO  │ SCK  │ VCC  │ GND  │
-└──────┴──────┴──────┴──────┘
-```
-
-| Pin | GPIO | SpoolBuddy Use |
-|-----|------|----------------|
-| 1 | IO44 | PN5180 MISO |
-| 2 | IO43 | PN5180 SCK |
-| 3 | 3V3 | PN5180 VCC |
-| 4 | GND | PN5180 GND |
-
----
-
-## UART1-OUT Header (4-pin)
+### UART1-OUT Header (4-pin)
 
 ```
 ┌──────┬──────┬──────┬──────┐
@@ -57,49 +39,61 @@ Quick reference for all SpoolBuddy hardware connections.
 
 ---
 
-## J11 Header (7-pin)
+## Raspberry Pi Pico GPIO Usage
+
+| GPIO | Function | Component | Pico Pin # |
+|------|----------|-----------|------------|
+| GP16 | MISO | PN5180 | 21 |
+| GP17 | NSS (CS) | PN5180 | 22 |
+| GP18 | MOSI | PN5180 | 24 |
+| GP19 | SCK | PN5180 | 25 |
+| GP20 | BUSY | PN5180 | 26 |
+| GP21 | RST | PN5180 | 27 |
+| 3V3 | VCC | PN5180 | 36 |
+| GND | GND | PN5180 | 33/38 |
+
+### Pico Pinout Diagram
 
 ```
-        J11
-        ┌────────┐
-Pin 1   │  IO19  │  ← (Reserved - I2C SDA)
-Pin 2   │  IO16  │  ← MOSI
-Pin 3   │  IO15  │  ← RST
-Pin 4   │   NC   │
-Pin 5   │  IO2   │  ← BUSY
-Pin 6   │  IO8   │  ← NSS
-Pin 7   │   NC   │
-        └────────┘
+                    Raspberry Pi Pico
+                  ┌───────────────────┐
+            GP0  ─┤ 1              40 ├─ VBUS
+            GP1  ─┤ 2              39 ├─ VSYS
+            GND  ─┤ 3              38 ├─ GND
+            GP2  ─┤ 4              37 ├─ 3V3_EN
+            GP3  ─┤ 5              36 ├─ 3V3 (OUT) ← VCC
+            GP4  ─┤ 6              35 ├─ ADC_VREF
+            GP5  ─┤ 7              34 ├─ GP28
+            GND  ─┤ 8              33 ├─ GND ← GND
+            GP6  ─┤ 9              32 ├─ GP27
+            GP7  ─┤ 10             31 ├─ GP26
+            GP8  ─┤ 11             30 ├─ RUN
+            GP9  ─┤ 12             29 ├─ GP22
+            GND  ─┤ 13             28 ├─ GND
+           GP10  ─┤ 14             27 ├─ GP21 ← RST
+           GP11  ─┤ 15             26 ├─ GP20 ← BUSY
+           GP12  ─┤ 16             25 ├─ GP19 ← SCK
+           GP13  ─┤ 17             24 ├─ GP18 ← MOSI
+            GND  ─┤ 18             23 ├─ GND
+           GP14  ─┤ 19             22 ├─ GP17 ← NSS
+           GP15  ─┤ 20             21 ├─ GP16 ← MISO
+                  └───────────────────┘
 ```
-
----
-
-## J9 Header - DO NOT USE
-
-!!! danger "LCD Conflict"
-    J9 pins conflict with the LCD display! Do not use for SPI.
-
-| Pin | GPIO | Conflict |
-|-----|------|----------|
-| 1 | IO20 | LCD |
-| 2 | IO5 | LCD |
-| 3 | IO4 | LCD |
-| 4 | IO6 | LCD |
 
 ---
 
 ## PN5180 Complete Wiring
 
-| PN5180 Pin | ESP32-S3 GPIO | Header | Pin # | Wire Color |
-|------------|---------------|--------|-------|------------|
-| VCC | 3.3V | UART0-OUT | Pin 3 | Red |
-| GND | GND | UART0-OUT | Pin 4 | Black |
-| SCK | IO43 | UART0-OUT | Pin 2 | Yellow |
-| MISO | IO44 | UART0-OUT | Pin 1 | Blue |
-| MOSI | IO16 | J11 | Pin 2 | Green |
-| NSS (CS) | IO8 | J11 | Pin 6 | Orange |
-| BUSY | IO2 | J11 | Pin 5 | White |
-| RST | IO15 | J11 | Pin 3 | Brown |
+| PN5180 Pin | Pico GPIO | Pico Pin # | Wire Color |
+|------------|-----------|------------|------------|
+| VCC | 3V3 | 36 | Red |
+| GND | GND | 33 | Black |
+| SCK | GP19 | 25 | Yellow |
+| MISO | GP16 | 21 | Orange |
+| MOSI | GP18 | 24 | Green |
+| NSS (CS) | GP17 | 22 | Blue |
+| BUSY | GP20 | 26 | Pink |
+| RST | GP21 | 27 | Brown |
 
 **SPI Configuration:**
 
@@ -111,8 +105,8 @@ Pin 7   │   NC   │
 
 ## NAU7802 Complete Wiring
 
-| NAU7802 Pin | ESP32-S3 GPIO | Header | Pin # |
-|-------------|---------------|--------|-------|
+| NAU7802 Pin | CrowPanel GPIO | Header | Pin # |
+|-------------|----------------|--------|-------|
 | VCC | 3.3V | UART1-OUT | Pin 3 |
 | GND | GND | UART1-OUT | Pin 4 |
 | SDA | IO19 | UART1-OUT | Pin 1 |
@@ -139,9 +133,9 @@ Pin 7   │   NC   │
 
 ---
 
-## Reserved GPIOs
+## CrowPanel Reserved GPIOs
 
-Do not use these pins:
+Do not use these pins on the CrowPanel:
 
 | GPIO | Reason |
 |------|--------|
@@ -151,14 +145,19 @@ Do not use these pins:
 | IO45 | USB D+ |
 | IO38-42 | PSRAM/Flash |
 
+!!! danger "J9 Header Conflict"
+    J9 pins conflict with the LCD display! Do not use for SPI.
+
 ---
 
 ## Voltage Reference
 
 | Rail | Voltage | Max Current | Components |
 |------|---------|-------------|------------|
-| 5V (USB) | 5.0V | 2A | CrowPanel input |
-| 3.3V | 3.3V | 500mA | PN5180, NAU7802 |
+| CrowPanel USB | 5.0V | 2A | CrowPanel input |
+| CrowPanel 3.3V | 3.3V | 500mA | NAU7802 |
+| Pico USB | 5.0V | 500mA | Pico input |
+| Pico 3V3 | 3.3V | 300mA | PN5180 |
 
 !!! danger
     PN5180 is **3.3V ONLY**. 5V will damage it!

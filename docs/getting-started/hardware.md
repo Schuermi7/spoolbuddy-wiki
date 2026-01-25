@@ -31,22 +31,23 @@ Complete bill of materials for building a SpoolBuddy station. Total cost: **$100
 
 ---
 
-## 2. Raspberry Pi Zero 2 W
+## 2. Raspberry Pi Pico
 
 | Specification | Value |
 |--------------|-------|
-| Price | ~$15-20 |
-| CPU | Quad-core ARM Cortex-A53 @ 1GHz |
-| RAM | 512MB |
-| WiFi | 2.4GHz 802.11 b/g/n |
-| Purpose | Backend server |
+| Price | ~$4-6 |
+| CPU | Dual-core ARM Cortex-M0+ @ 133MHz |
+| RAM | 264KB |
+| Interface | USB, SPI, I2C, UART |
+| Purpose | NFC reader controller |
 
 **Purchase:**
 
-- [Raspberry Pi Official](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/){ target="_blank" }
+- [Raspberry Pi Official](https://www.raspberrypi.com/products/raspberry-pi-pico/){ target="_blank" }
+- [Amazon](https://www.amazon.com/s?k=raspberry+pi+pico){ target="_blank" }
 
-!!! info "Alternative"
-    You can also use a Raspberry Pi 3/4/5 if you have one available.
+!!! info "Pico W Alternative"
+    The Pico W (with WiFi) also works if you have one available.
 
 ---
 
@@ -139,13 +140,13 @@ Complete bill of materials for building a SpoolBuddy station. Total cost: **$100
 | # | Component | Price | Required |
 |---|-----------|-------|----------|
 | 1 | Elecrow CrowPanel 7.0" Advance | $50-60 | :material-check: |
-| 2 | Raspberry Pi Zero 2 W | $15-20 | :material-check: |
+| 2 | Raspberry Pi Pico | $4-6 | :material-check: |
 | 3 | SparkFun Qwiic NAU7802 | $15-25 | :material-check: |
 | 4 | Load Cell 5kg | $5-10 | :material-check: |
 | 5 | PN5180 NFC Reader | $10-15 | :material-check: |
 | 6 | 22AWG Silicone Wire | $10-15 | :material-check: |
 | 7 | M4x25 Screws (4x) | $2-5 | :material-check: |
-| | **Total** | **$107-150** | |
+| | **Total** | **$96-136** | |
 
 ---
 

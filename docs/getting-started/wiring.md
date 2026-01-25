@@ -4,6 +4,33 @@ Detailed wiring diagrams and pin connections for all SpoolBuddy components.
 
 ---
 
+## System Architecture
+
+SpoolBuddy uses two microcontrollers:
+
+- **CrowPanel (ESP32-S3)** - Display, UI, and scale (NAU7802)
+- **Raspberry Pi Pico** - NFC reader (PN5180)
+
+```
+┌─────────────────┐      ┌─────────────────┐      ┌─────────────────┐
+│   CrowPanel     │      │  Raspberry Pi   │      │    PN5180       │
+│   ESP32-S3      │      │     Pico        │─SPI──│    NFC          │
+│                 │      │                 │      │                 │
+│   UART1-OUT ────┼──I2C─│                 │      └─────────────────┘
+└────────┬────────┘      └─────────────────┘
+         │
+    ┌────┴────┐
+    │ NAU7802 │
+    │  Scale  │
+    └────┬────┘
+         │
+    ┌────┴────┐
+    │Load Cell│
+    └─────────┘
+```
+
+---
+
 ## Safety First
 
 - :material-power-plug-off: **Always disconnect power** before making wiring changes
@@ -12,119 +39,17 @@ Detailed wiring diagrams and pin connections for all SpoolBuddy components.
 
 ---
 
-## CrowPanel Connector Layout
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                     CrowPanel Advance 7.0" (Back)                       │
-│                                                                         │
-│   ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌─────────┐  ┌─────────┐   │
-│   │UART0-OUT │  │UART1-OUT │  │ I2C-OUT  │  │   J9    │  │   J11   │   │
-│   │  4-pin   │  │  4-pin   │  │  4-pin   │  │  1x7    │  │  1x7    │   │
-│   │ SPI CLK  │  │  Scale   │  │          │  │  N/A!   │  │ Control │   │
-│   │ SPI MISO │  │  I2C     │  │          │  │CONFLICT │  │  Pins   │   │
-│   └──────────┘  └──────────┘  └──────────┘  └─────────┘  └─────────┘   │
-│                                                                         │
-│   [BOOT]  [RESET]                                           [USB-C]    │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
-!!! danger "J9 Header Conflict"
-    J9 header pins (IO4, IO5, IO6) are used internally by the RGB LCD display! These pins appear shorted to GND when the display is powered on. **DO NOT use J9 for SPI** - use UART0-OUT header instead.
-
----
-
 ## Wiring Diagram
 
-```
-                                    ┌─────────────────────────────────────────┐
-                                    │     ELECROW CrowPanel Advance 7.0"      │
-                                    │                                         │
-     PN5180 NFC Module              │   UART0-OUT Header                      │
-    ┌──────────────────┐            │   ┌───────────────────┐                 │
-    │   ┌──────────┐   │            │   │  IO43 ●──────────┼─────SCK         │
-    │   │PN5180    │   │            │   │  IO44 ●──────────┼─────MISO        │
-    │   │  Chip    │   │            │   │  3V3  ●──────────┼─────VCC         │
-    │   └──────────┘   │            │   │  GND  ●──────────┼─────GND         │
-    │   ┌──────────┐   │            │   └───────────────────┘                 │
-    │   │ Antenna  │   │            │                                         │
-    │   └──────────┘   │            │   J11 Header                            │
-    └──────────────────┘            │   ┌───────────────────┐                 │
-            │                       │   │  IO16 ●──────────┼─────MOSI        │
-            │                       │   │  IO15 ●──────────┼─────RST         │
-            └───────────────────────┼───│  IO2  ●──────────┼─────BUSY        │
-                                    │   │  IO8  ●──────────┼─────NSS (CS)    │
-                                    │   └───────────────────┘                 │
-                                    │                                         │
-     NAU7802 + Load Cell            │   UART1-OUT                             │
-    ┌──────────────────┐            │   ┌───────────────────┐                 │
-    │  ┌────────────┐  │            │   │  IO19 ●──────────┼─────SDA         │
-    │  │ SparkFun   │  │            │   │  IO20 ●──────────┼─────SCL         │
-    │  │ Qwiic      │  │            │   │  3V3  ●──────────┼─────VCC         │
-    │  │ Scale      │  │            │   │  GND  ●──────────┼─────GND         │
-    │  └────────────┘  │            │   └───────────────────┘                 │
-    │   ┌────┴────┐    │            │                                         │
-    │   │Load Cell│    │            │   USB-C (Power)                         │
-    │   └─────────┘    │            │   ┌───────────────────┐                 │
-    └──────────────────┘            │   │    ○ USB-C        │                 │
-                                    │   └───────────────────┘                 │
-                                    └─────────────────────────────────────────┘
-```
+![SpoolBuddy Wiring Diagram](../assets/spoolbuddy-cabling.jpeg)
 
 ---
 
-## PN5180 NFC Reader (SPI)
+## NAU7802 Scale → CrowPanel (I2C)
 
-### UART0-OUT Header (4-pin)
+The scale ADC connects to the CrowPanel's **UART1-OUT** header.
 
-```
-┌──────┬──────┬──────┬──────┐
-│ Pin1 │ Pin2 │ Pin3 │ Pin4 │
-│IO44  │IO43  │ 3V3  │ GND  │
-│MISO  │ SCK  │ VCC  │ GND  │
-└──────┴──────┴──────┴──────┘
-
-BLUE   ───┤ IO44 : ← MISO (SPI data IN)
-YELLOW ───┤ IO43 : ← SCK  (SPI clock)
-RED    ───┤ 3V3  : ← VCC  (⚠️ 3.3V ONLY!)
-BLACK  ───┤ GND  : ← GND
-```
-
-### J11 Header Control Pins
-
-```
-        J11 (Right Side)
-        ┌────────┐
-Pin 2   │  IO16  │   ← MOSI (SPI data OUT)
-Pin 3   │  IO15  │   ← RST
-Pin 5   │  IO2   │   ← BUSY
-Pin 6   │  IO8   │   ← NSS (CS)
-        └────────┘
-
-GREEN  ───┤ IO16 : ← MOSI
-BROWN  ───┤ IO15 : ← RST
-WHITE  ───┤ IO2  : ← BUSY
-ORANGE ───┤ IO8  : ← NSS
-```
-
-### Complete PN5180 Pin Table
-
-| PN5180 Pin | ESP32-S3 GPIO | Header | Pin # | Wire Color |
-|------------|---------------|--------|-------|------------|
-| VCC | 3.3V | UART0-OUT | Pin 3 | Red |
-| GND | GND | UART0-OUT | Pin 4 | Black |
-| SCK | IO43 | UART0-OUT | Pin 2 | Yellow |
-| MISO | IO44 | UART0-OUT | Pin 1 | Blue |
-| MOSI | IO16 | J11 | Pin 2 | Green |
-| NSS (CS) | IO8 | J11 | Pin 6 | Orange |
-| BUSY | IO2 | J11 | Pin 5 | White |
-| RST | IO15 | J11 | Pin 3 | Brown |
-
----
-
-## NAU7802 Scale ADC (I2C)
-
-### UART1-OUT Header (4-pin)
+### UART1-OUT Header Pinout
 
 ```
 ┌──────┬──────┬──────┬──────┐
@@ -132,23 +57,22 @@ ORANGE ───┤ IO8  : ← NSS
 │IO19  │IO20  │ 3V3  │ GND  │
 │ SDA  │ SCL  │ VCC  │ GND  │
 └──────┴──────┴──────┴──────┘
-
-YELLOW ───┤ IO19 : ← SDA (I2C data)
-WHITE  ───┤ IO20 : ← SCL (I2C clock)
-RED    ───┤ 3V3  : ← VCC
-BLACK  ───┤ GND  : ← GND
 ```
 
-| NAU7802 Pin | ESP32-S3 GPIO | Header | Pin # |
-|-------------|---------------|--------|-------|
-| VCC | 3.3V | UART1-OUT | Pin 3 |
-| GND | GND | UART1-OUT | Pin 4 |
-| SDA | IO19 | UART1-OUT | Pin 1 |
-| SCL | IO20 | UART1-OUT | Pin 2 |
+### NAU7802 Connections
+
+| NAU7802 Pin | CrowPanel | Header | Wire Color |
+|-------------|-----------|--------|------------|
+| SDA | IO19 | UART1-OUT Pin 1 | Yellow |
+| SCL | IO20 | UART1-OUT Pin 2 | White |
+| VCC | 3.3V | UART1-OUT Pin 3 | Red |
+| GND | GND | UART1-OUT Pin 4 | Black |
 
 ---
 
-## Load Cell to NAU7802
+## Load Cell → NAU7802
+
+Connect the 4-wire load cell to the screw terminals on the NAU7802 board.
 
 ```
    Load Cell (5kg)                SparkFun Qwiic Scale
@@ -172,27 +96,84 @@ BLACK  ───┤ GND  : ← GND
 
 ---
 
+## PN5180 NFC → Raspberry Pi Pico (SPI)
+
+The NFC reader connects to the Raspberry Pi Pico via SPI.
+
+### Pico Pinout Reference
+
+```
+                    Raspberry Pi Pico
+                  ┌───────────────────┐
+            GP0  ─┤ 1              40 ├─ VBUS
+            GP1  ─┤ 2              39 ├─ VSYS
+            GND  ─┤ 3              38 ├─ GND
+            GP2  ─┤ 4              37 ├─ 3V3_EN
+            GP3  ─┤ 5              36 ├─ 3V3 (OUT) ← VCC
+            GP4  ─┤ 6              35 ├─ ADC_VREF
+            GP5  ─┤ 7              34 ├─ GP28
+            GND  ─┤ 8              33 ├─ GND ← GND
+            GP6  ─┤ 9              32 ├─ GP27
+            GP7  ─┤ 10             31 ├─ GP26
+            GP8  ─┤ 11             30 ├─ RUN
+            GP9  ─┤ 12             29 ├─ GP22
+            GND  ─┤ 13             28 ├─ GND
+           GP10  ─┤ 14             27 ├─ GP21
+           GP11  ─┤ 15             26 ├─ GP20
+           GP12  ─┤ 16             25 ├─ GP19 ← SCK
+           GP13  ─┤ 17             24 ├─ GP18 ← MOSI
+            GND  ─┤ 18             23 ├─ GND
+           GP14  ─┤ 19             22 ├─ GP17 ← NSS (CS)
+           GP15  ─┤ 20             21 ├─ GP16 ← MISO
+                  └───────────────────┘
+```
+
+### PN5180 Connections
+
+| PN5180 Pin | Pico GPIO | Pico Pin # | Wire Color |
+|------------|-----------|------------|------------|
+| VCC | 3V3 | 36 | Red |
+| GND | GND | 33 or 38 | Black |
+| SCK | GP19 | 25 | Yellow |
+| MISO | GP16 | 21 | Orange |
+| MOSI | GP18 | 24 | Green |
+| NSS (CS) | GP17 | 22 | Blue |
+| BUSY | GP20 | 26 | Pink |
+| RST | GP21 | 27 | Brown |
+
+!!! danger "3.3V Only!"
+    The PN5180 is 3.3V only. Do NOT connect to 5V (VBUS) - it will damage the chip!
+
+---
+
 ## Quick Reference Card
 
 ```
 ┌────────────────────────────────────────────────────────────┐
-│           SPOOLBUDDY QUICK WIRING (CrowPanel 7.0")         │
+│              SPOOLBUDDY QUICK WIRING REFERENCE             │
 ├────────────────────────────────────────────────────────────┤
 │                                                            │
-│  *** DO NOT USE J9 HEADER - CONFLICTS WITH LCD ***         │
+│  NAU7802 (Scale) → CrowPanel UART1-OUT                    │
+│  ─────────────────────────────────────                    │
+│  SDA  → Pin 1 (IO19)    VCC → Pin 3 (3V3)                │
+│  SCL  → Pin 2 (IO20)    GND → Pin 4 (GND)                │
 │                                                            │
-│  PN5180 (NFC)              NAU7802 (Scale)                 │
-│  ───────────               ──────────────                  │
-│  VCC  → UART0 Pin3 (3V3)   VCC → UART1 Pin3 (3V3)         │
-│  GND  → UART0 Pin4 (GND)   GND → UART1 Pin4 (GND)         │
-│  SCK  → UART0 Pin2 (IO43)  SDA → UART1 Pin1 (IO19)        │
-│  MISO → UART0 Pin1 (IO44)  SCL → UART1 Pin2 (IO20)        │
-│  MOSI → J11 Pin2 (IO16)                                    │
-│  CS   → J11 Pin6 (IO8)     Load Cell → Qwiic terminal     │
-│  BUSY → J11 Pin5 (IO2)       Red   → E+                   │
-│  RST  → J11 Pin3 (IO15)      Black → E-                   │
-│                              White → A-                    │
-│  Power: USB-C 5V/2A          Green → A+                   │
+│  Load Cell → NAU7802 Terminals                            │
+│  ─────────────────────────────                            │
+│  Red → E+    Black → E-    White → A-    Green → A+      │
+│                                                            │
+│  PN5180 (NFC) → Raspberry Pi Pico                         │
+│  ────────────────────────────────                         │
+│  VCC  → 3V3 (Pin 36)        SCK  → GP19 (Pin 25)         │
+│  GND  → GND (Pin 33)        MISO → GP16 (Pin 21)         │
+│  MOSI → GP18 (Pin 24)       NSS  → GP17 (Pin 22)         │
+│  BUSY → GP20 (Pin 26)       RST  → GP21 (Pin 27)         │
+│                                                            │
+│  Power                                                     │
+│  ─────                                                     │
+│  CrowPanel: USB-C 5V/2A                                   │
+│  Pico: USB or powered from PN5180 circuit                 │
+│                                                            │
 └────────────────────────────────────────────────────────────┘
 ```
 
@@ -200,38 +181,44 @@ BLACK  ───┤ GND  : ← GND
 
 ## Power Requirements
 
-| Component | Voltage | Current (typical) | Current (peak) |
-|-----------|---------|-------------------|----------------|
-| CrowPanel 7.0" | 5V (via USB) | 300mA | 600mA |
-| PN5180 | 3.3V | 80mA | 150mA |
-| NAU7802 | 3.3V | 1mA | 2mA |
-| **Total** | **5V USB** | **~400mA** | **~750mA** |
+| Component | Voltage | Current (typical) |
+|-----------|---------|-------------------|
+| CrowPanel 7.0" | 5V (USB-C) | 300-600mA |
+| Raspberry Pi Pico | 5V (USB) or 3.3V | 25-100mA |
+| PN5180 | 3.3V | 80-150mA |
+| NAU7802 | 3.3V | 1-2mA |
 
 !!! success "Recommendation"
-    Use a quality USB-C cable and 5V/2A power adapter.
+    Use quality USB-C cables and a 5V/2A power adapter for the CrowPanel.
 
 ---
 
 ## Wiring Checklist
 
-### PN5180
+### NAU7802 → CrowPanel
 
-- [ ] VCC connected to 3.3V (NOT 5V!)
-- [ ] GND connected to GND
-- [ ] SCK → UART0-OUT Pin 2 (IO43)
-- [ ] MISO → UART0-OUT Pin 1 (IO44)
-- [ ] MOSI → J11 Pin 2 (IO16)
-- [ ] NSS → J11 Pin 6 (IO8)
-- [ ] BUSY → J11 Pin 5 (IO2)
-- [ ] RST → J11 Pin 3 (IO15)
-
-### NAU7802
-
-- [ ] VCC connected to 3.3V
-- [ ] GND connected to GND
 - [ ] SDA → UART1-OUT Pin 1 (IO19)
 - [ ] SCL → UART1-OUT Pin 2 (IO20)
-- [ ] Load cell wired to E+/E-/A+/A-
+- [ ] VCC → UART1-OUT Pin 3 (3V3)
+- [ ] GND → UART1-OUT Pin 4 (GND)
+
+### Load Cell → NAU7802
+
+- [ ] Red wire → E+ terminal
+- [ ] Black wire → E- terminal
+- [ ] White wire → A- terminal
+- [ ] Green wire → A+ terminal
+
+### PN5180 → Pico
+
+- [ ] VCC → 3V3 (Pin 36) - **NOT 5V!**
+- [ ] GND → GND (Pin 33)
+- [ ] SCK → GP19 (Pin 25)
+- [ ] MISO → GP16 (Pin 21)
+- [ ] MOSI → GP18 (Pin 24)
+- [ ] NSS → GP17 (Pin 22)
+- [ ] BUSY → GP20 (Pin 26)
+- [ ] RST → GP21 (Pin 27)
 
 ---
 
