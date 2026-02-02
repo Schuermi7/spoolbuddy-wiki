@@ -41,7 +41,7 @@ SpoolBuddy uses two microcontrollers:
 
 ## Wiring Diagram
 
-![SpoolBuddy Wiring Diagram](../assets/spoolbuddy-wiring.png)
+![SpoolBuddy Wiring Diagram](../assets/spoolbuddy_wiring.png)
 
 ---
 
