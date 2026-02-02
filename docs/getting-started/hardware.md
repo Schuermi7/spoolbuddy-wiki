@@ -24,7 +24,7 @@ Complete bill of materials for building a SpoolBuddy station. Total cost: **$100
 
 **Why this display?**
 
-- Built-in ESP32-S3 eliminates separate microcontroller
+- Built-in ESP32-S3
 - Plenty of GPIO pins for peripherals
 - High-quality IPS touchscreen
 - USB-C power and programming
