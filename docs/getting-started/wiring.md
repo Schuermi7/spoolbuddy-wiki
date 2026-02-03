@@ -18,7 +18,7 @@ SpoolBuddy uses two microcontrollers:
 │                 │      │                 │      │                 │
 │   UART1-OUT ────┼──I2C─│                 │      └─────────────────┘
 └────────┬────────┘      └─────────────────┘
-         │
+         │ I2C
     ┌────┴────┐
     │ NAU7802 │
     │  Scale  │
@@ -41,7 +41,7 @@ SpoolBuddy uses two microcontrollers:
 
 ## Wiring Diagram
 
-![SpoolBuddy Wiring Diagram](../assets/spoolbuddy-cabling.jpeg)
+![SpoolBuddy Wiring Diagram](../assets/spoolbuddy_wiring.png)
 
 ---
 
@@ -109,17 +109,17 @@ The NFC reader connects to the Raspberry Pi Pico via SPI.
             GP1  ─┤ 2              39 ├─ VSYS
             GND  ─┤ 3              38 ├─ GND
             GP2  ─┤ 4              37 ├─ 3V3_EN
-            GP3  ─┤ 5              36 ├─ 3V3 (OUT) ← VCC
+            GP3  ─┤ 5              36 ├─ 3V3 (OUT)
             GP4  ─┤ 6              35 ├─ ADC_VREF
             GP5  ─┤ 7              34 ├─ GP28
-            GND  ─┤ 8              33 ├─ GND ← GND
+            GND  ─┤ 8              33 ├─ GND
             GP6  ─┤ 9              32 ├─ GP27
             GP7  ─┤ 10             31 ├─ GP26
             GP8  ─┤ 11             30 ├─ RUN
             GP9  ─┤ 12             29 ├─ GP22
             GND  ─┤ 13             28 ├─ GND
-           GP10  ─┤ 14             27 ├─ GP21
-           GP11  ─┤ 15             26 ├─ GP20
+           GP10  ─┤ 14             27 ├─ GP21 ← RST (RESET)
+           GP11  ─┤ 15             26 ├─ GP20 ← BUSY
            GP12  ─┤ 16             25 ├─ GP19 ← SCK
            GP13  ─┤ 17             24 ├─ GP18 ← MOSI
             GND  ─┤ 18             23 ├─ GND
@@ -153,27 +153,40 @@ The NFC reader connects to the Raspberry Pi Pico via SPI.
 │              SPOOLBUDDY QUICK WIRING REFERENCE             │
 ├────────────────────────────────────────────────────────────┤
 │                                                            │
-│  NAU7802 (Scale) → CrowPanel UART1-OUT                    │
-│  ─────────────────────────────────────                    │
-│  SDA  → Pin 1 (IO19)    VCC → Pin 3 (3V3)                │
-│  SCL  → Pin 2 (IO20)    GND → Pin 4 (GND)                │
+│  NAU7802 (Scale) → CrowPanel UART1-OUT                     │
+│  ─────────────────────────────────────                     │
+│  SDA  → Pin 1 (IO19)    VCC → Pin 3 (3V3)                  │
+│  SCL  → Pin 2 (IO20)    GND → Pin 4 (GND)                  │
 │                                                            │
-│  Load Cell → NAU7802 Terminals                            │
-│  ─────────────────────────────                            │
-│  Red → E+    Black → E-    White → A-    Green → A+      │
+│  Load Cell → NAU7802 Terminals                             │
+│  ─────────────────────────────                             │
+│  Red → E+    Black → E-    White → A-    Green → A+        │
 │                                                            │
-│  PN5180 (NFC) → Raspberry Pi Pico                         │
-│  ────────────────────────────────                         │
-│  VCC  → 3V3 (Pin 36)        SCK  → GP19 (Pin 25)         │
-│  GND  → GND (Pin 33)        MISO → GP16 (Pin 21)         │
-│  MOSI → GP18 (Pin 24)       NSS  → GP17 (Pin 22)         │
-│  BUSY → GP20 (Pin 26)       RST  → GP21 (Pin 27)         │
+│  PN5180 (NFC) → Raspberry Pi Pico                          │
+│  ────────────────────────────────                          │
+│  MISO → GP16 (Pin 21)       SCK  → GP19 (Pin 25)           │
+│  MOSI → GP18 (Pin 24)       NSS  → GP17 (Pin 22)           │
+│  BUSY → GP20 (Pin 26)       RST  → GP21 (Pin 27)           │
+│                                                            │
+│  PN5180 (NFC) → CrowPanel UART1-OUT                        │
+│  ────────────────────────────────                          │
+│  VCC  → Pin 3 (3V3)        GND  → Pin 4 (GND)              │
+│  5V   → Pin3 (3V3) (not redundant, enables antenna)        │
+│                                                            │
+│  Raspberry Pi Pico → CrowPanel UART1-OUT                   │
+│  ────────────────────────────────                          │
+│  VSYS (Pin 39) → Pin3 (3V3)   GP4  → Pin 1 (IO19)          │
+│  GND  (Pin 38) → Pin4 (GND)  GP5  → Pin 2 (IO20)           │
 │                                                            │
 │  Power                                                     │
 │  ─────                                                     │
-│  CrowPanel: USB-C 5V/2A                                   │
-│  Pico: USB or powered from PN5180 circuit                 │
+│  CrowPanel: USB-C 5V/2A                                    │
 │                                                            │
+│  Pico: powered from I2C                                    │
+│  (powering via USB is possible for debug purposes,         │
+│  but connection to VSYS (Pin 39) should be swapped to      │
+│  3V3_EN (Pin37) when using it to prevent the USB-5V        │
+│  from seeping into the system)                             │
 └────────────────────────────────────────────────────────────┘
 ```
 
@@ -211,14 +224,25 @@ The NFC reader connects to the Raspberry Pi Pico via SPI.
 
 ### PN5180 → Pico
 
-- [ ] VCC → 3V3 (Pin 36) - **NOT 5V!**
-- [ ] GND → GND (Pin 33)
 - [ ] SCK → GP19 (Pin 25)
 - [ ] MISO → GP16 (Pin 21)
 - [ ] MOSI → GP18 (Pin 24)
 - [ ] NSS → GP17 (Pin 22)
 - [ ] BUSY → GP20 (Pin 26)
 - [ ] RST → GP21 (Pin 27)
+
+### PN5180 → CrowPanel
+
+- [ ] VCC → UART1-OUT Pin 3 (3V3)
+- [ ] 5V → UART1-OUT Pin 3 (3V3)
+- [ ] GND → UART1-OUT Pin 4 (GND)
+
+### Pico → CrowPanel
+- [ ] VSYS (Pin 39) → UART1-OUT Pin 3 (3V3)  
+- [ ] GND  (Pin 38) → UART1-OUT Pin 4 (GND)
+
+!!! danger "USB-powered Pico"
+    If you wish to connect the Pico to USB-power (e.g. for debugging purposes), connect **UART-OUT Pin3 (3V3)** to **3V3_EN (Pin37)** to prevent 5V power to seep into the 3.3V power distribution.
 
 ---
 
