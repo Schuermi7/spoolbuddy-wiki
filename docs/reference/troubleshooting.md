@@ -13,7 +13,6 @@ Common issues and solutions for SpoolBuddy.
 **Solutions:**
 
 1. **Verify wiring** - Check all 8 connections against [Wiring Guide](../getting-started/wiring.md)
-2. **Don't use J9!** - MISO/MOSI must NOT be connected to J9 (conflicts with LCD)
 3. **Check voltage** - Measure 3.3V at PN5180 VCC pin (NOT 5V!)
 4. **Verify RST pin** - Should be HIGH (3.3V) during operation
 5. **Reduce SPI speed** - Try 500kHz for testing
@@ -21,7 +20,7 @@ Common issues and solutions for SpoolBuddy.
 ### Tags Not Detected
 
 - **Tag compatibility:** Bambu Lab tags are ISO 15693. RC522 does NOT work!
-- **Antenna position:** Center under spool core, <20cm from tag
+- **Antenna position:** Center under spool core, <5cm from tag
 - **Interference:** Move away from WiFi router, metal surfaces
 
 ---
@@ -103,7 +102,7 @@ chmod 664 spoolbuddy.db
 
 ### WebSocket Disconnects
 
-- Check Pi resources: `htop`
+- Check server resources: `htop`
 - Check network stability
 - Increase WebSocket ping interval
 
@@ -117,9 +116,9 @@ chmod 664 spoolbuddy.db
 
 **Verify:**
 
-1. **Network:** Pi and printer on same network
+1. **Network:** server and printer on same network
    ```bash
-   ping 192.168.1.50  # your printer IP
+   ping <Printer_IP>
    ```
 
 2. **Credentials:** Serial number and access code correct
@@ -138,8 +137,6 @@ chmod 664 spoolbuddy.db
 ### Check Hardware
 
 ```bash
-# I2C scan (should show NAU7802 at 0x2A)
-i2cdetect -y 1
 
 # Check USB devices
 lsusb
@@ -164,11 +161,11 @@ sudo systemctl restart spoolbuddy
 ### Check Network
 
 ```bash
-# Pi IP address
+# IP address
 ip addr
 
 # Ping printer
-ping -c 5 192.168.1.50
+ping -c 5 <Printer_IP>
 
 # Check ports
 netstat -tlnp | grep 3000

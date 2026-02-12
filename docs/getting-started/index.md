@@ -82,7 +82,6 @@ Welcome to SpoolBuddy! This guide will walk you through building your own filame
 <div class="feature-card" markdown>
 ### :material-alert-circle: Important Warnings
 - PN5180 is **3.3V only** - 5V will damage it!
-- **Don't use J9 header** - conflicts with LCD
 - RC522 won't work - need PN5180 for ISO 15693
 </div>
 
